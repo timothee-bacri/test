@@ -26,7 +26,7 @@ jobs:
           git branch -r | grep -Ev '.*main|dev.*' | sed 's|origin/||g' | sed 's| *||g' | tr '\n' ' ' | sed -E 's| $||'
           echo "branches=$(git branch -r | grep -Ev '.*main|dev.*' | sed 's|origin/||g' | sed 's| *||g' | tr '\n' ' ' | sed -E 's| $||')" >> "$GITHUB_OUTPUT"
           
-      - name: Create PRs
+      - name: Create PRs from dev to all branches except main & dev & the triggering branch, unless a PR already exists
         env:
          GH_TOKEN: ${{ secrets.ACTION_TOKEN_LOCAL_REPO_SECRET }}
         run: |
@@ -34,9 +34,12 @@ jobs:
           
             # Only proceed if this is not the triggering branch
             if [ "$branch" != "${{ steps.triggering_branch.outputs.branch }}" ]; then
+
+              # Get changed files between dev and $branch
+              changed_files=$(git diff --name-only origin/dev origin/$branch)
               
               # Create a PR from dev to $branch unless one already exists
-              if ! gh pr list --state open --head dev --json author,number,headRefName,baseRefName,changedFiles | jq -r '.[].baseRefName' | grep -q $branch ; then
+              if [ -n "$changed_files" ] && ! gh pr list --state open --head dev --json author,number,headRefName,baseRefName,changedFiles | jq -r '.[].baseRefName' | grep -q $branch ; then
                 gh pr create --title "Merge dev into $branch" \
                              --body "This PR was automatically created to propose changes from dev into $branch." \
                              --base $branch \
