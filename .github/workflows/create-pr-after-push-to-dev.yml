@@ -30,14 +30,13 @@ jobs:
         env:
          GH_TOKEN: ${{ secrets.ACTION_TOKEN_LOCAL_REPO_SECRET }}
         run: |
-          git fetch origin --prune
           for branch in ${{ steps.branches_minus_dev_main.outputs.branches }}; do
           
             # Only proceed if this is not the triggering branch
             if [ "$branch" != "${{ steps.triggering_branch.outputs.branch }}" ]; then
 
               # Get changed files between dev and $branch
-              changed_files=$(git diff --name-only dev $branch)
+              changed_files=$(git diff --name-only origin/dev origin/$branch)
               
               # Create a PR from dev to $branch unless one already exists
               if [ -n "$changed_files" ] && ! gh pr list --state open --head dev --json author,number,headRefName,baseRefName,changedFiles | jq -r '.[].baseRefName' | grep -q $branch ; then
