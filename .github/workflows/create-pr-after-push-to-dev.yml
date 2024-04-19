@@ -27,7 +27,7 @@ jobs:
           echo "${GITHUB_REF#refs}"
           echo 3
           echo "${GITHUB_REF#refs/heads/}"
-          echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+          echo "branch=${GITHUB_REF#refs/heads/}" >> "$GITHUB_OUTPUT"
           
       - name: Read output
         run: echo "branch=${{ steps.get_branch.outputs.branch }}"
@@ -44,7 +44,12 @@ jobs:
           git branch -r | grep -Ev '.*main|dev.*' | sed 's|origin/||g'
           echo 4
           git branch -r | grep -Ev '.*main|dev.*' | sed 's|origin/||g' | sed 's| *||g'
-          echo "branches=$(git branch -r | grep -Ev '.*main|dev.*' | sed 's|origin/||g' | sed 's| *||g')" >> $GITHUB_OUTPUT
+          # echo "branches=$(git branch -r | grep -Ev '.*main|dev.*' | sed 's|origin/||g' | sed 's| *||g')" >> "$GITHUB_OUTPUT"
+          {
+            echo 'branches<<EOF'
+            git branch -r | grep -Ev '.*main|dev.*' | sed 's|origin/||g' | sed 's| *||g'
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
           
       - name: Read output
         run: echo "branch=${{ steps.get_branches.outputs.branches }}"
