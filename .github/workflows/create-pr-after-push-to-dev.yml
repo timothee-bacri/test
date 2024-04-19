@@ -41,7 +41,7 @@ jobs:
               pr_exist=$(gh pr list --state open --head dev --json author,number,headRefName,baseRefName,changedFiles | jq -r '.[].baseRefName' | grep -q $branch)
               echo "pr_exists=$pr_exists"
               gh pr list --state open --head dev --json author,number,headRefName,baseRefName,changedFiles | jq -r '.[].baseRefName' | grep -q $branch && echo yes || echo no
-              if [[ ( gh pr list --state open --head dev --json author,number,headRefName,baseRefName,changedFiles | jq -r '.[].baseRefName' | grep -q $branch ) ]]; then
+              if [[ $(gh pr list --state open --head dev --json author,number,headRefName,baseRefName,changedFiles | jq -r '.[].baseRefName' | grep -q $branch) ]]; then
                 gh pr create --title "Merge dev into $branch" \
                              --body "This PR was automatically created to propose changes from dev into $branch." \
                              --base $branch \
