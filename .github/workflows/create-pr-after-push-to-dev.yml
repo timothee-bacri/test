@@ -1,19 +1,25 @@
 name: Create PRs from dev to feature branches after pushing to dev
 
 on:
-  #push:
-    #branches:
-      #- dev
   pull_request:
-    types: 
-      - closed
-    branches:
-      - dev
+    types: [closed]
+    paths:
+      - 'dev/**' # Adjust the path to match the dev branch
 
 jobs:
+  read:
+    runs-on: ubuntu-latest
+    steps:
+      - name: read
+        run: |
+          echo "${{ github.event.pull_request.merged }}"
+          echo "${{ github.event.pull_request.merged }} && echo true || echo false"
+          echo aa
+          echo ${{ github.event.pull_request.base.ref }}
+  
   create-prs:
     runs-on: ubuntu-latest
-
+    if: github.event.pull_request.merged && github.event.pull_request.base.ref == 'main'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
