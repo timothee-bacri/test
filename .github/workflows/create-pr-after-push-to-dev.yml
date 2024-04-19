@@ -30,6 +30,7 @@ jobs:
         env:
          GH_TOKEN: ${{ secrets.ACTION_TOKEN_LOCAL_REPO_SECRET }}
         run: |
+          git fetch origin --prune
           for branch in ${{ steps.branches_minus_dev_main.outputs.branches }}; do
           
             # Only proceed if this is not the triggering branch
