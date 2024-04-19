@@ -2,9 +2,8 @@ name: Create PRs from dev to feature branches after pushing to dev
 
 on:
   pull_request:
-    types: [closed]
-    paths:
-      - 'dev/**' # Adjust the path to match the dev branch
+    types: 
+      - closed
 
 jobs:
   read:
@@ -14,12 +13,14 @@ jobs:
         run: |
           echo "${{ github.event.pull_request.merged }}"
           echo "${{ github.event.pull_request.merged }} && echo true || echo false"
-          echo aa
-          echo ${{ github.event.pull_request.base.ref }}
+          echo base.ref
+          echo "${{ github.event.pull_request.base.ref }}"
+          echo head.ref
+          echo "${{ github.event.pull_request.head.ref }}"
   
   create-prs:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged && github.event.pull_request.base.ref == 'main'
+    if: github.event.pull_request.merged && github.event.pull_request.base.ref == 'dev'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -40,13 +41,12 @@ jobs:
         env:
          GH_TOKEN: ${{ secrets.ACTION_TOKEN_LOCAL_REPO_SECRET }}
         run: |
-          for branch in ${{ steps.get_branches.outputs.branches }}; do
-            echo "branch=$branch"
-            if [ "$branch" != "${{ steps.get_branch.outputs.branch }}" ]; then
-              echo branch is different
-              pr_exist=$(gh pr list --state open --head dev --json author,number,headRefName,baseRefName,changedFiles | jq -r '.[].baseRefName' | grep -q $branch)
-              echo "pr_exists=$pr_exists"
-              gh pr list --state open --head dev --json author,number,headRefName,baseRefName,changedFiles | jq -r '.[].baseRefName' | grep -q $branch && echo pr exists || echo pr does not exist
+          for branch in ${{ steps.branches_minus_dev_main.outputs.branches }}; do
+          
+            # Only proceed if this is not the triggering branch
+            if [ "$branch" != "${{ steps.triggering_branch.outputs.branch }}" ]; then
+              
+              # Create a PR from dev to $branch unless one already exists
               if ! gh pr list --state open --head dev --json author,number,headRefName,baseRefName,changedFiles | jq -r '.[].baseRefName' | grep -q $branch ; then
                 gh pr create --title "Merge dev into $branch" \
                              --body "This PR was automatically created to propose changes from dev into $branch." \
