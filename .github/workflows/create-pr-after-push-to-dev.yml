@@ -14,13 +14,13 @@ jobs:
           echo "${{ github.event.pull_request.merged }}"
           echo "${{ github.event.pull_request.merged }} && echo true || echo false"
           echo base.ref
-          echo ${{ github.event.pull_request.base.ref }}
+          echo "${{ github.event.pull_request.base.ref }}"
           echo head.ref
           echo "${{ github.event.pull_request.head.ref }}"
   
   create-prs:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged && github.event.pull_request.base.ref == 'dev' && github.event.pull_request.head.ref != 'main'
+    if: github.event.pull_request.merged && github.event.pull_request.base.ref == 'dev'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
