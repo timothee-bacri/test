@@ -1,0 +1,42 @@
+name: Create PRs from dev to feature branches after pushing to dev
+
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    types: 
+      - closed
+    branches:
+      - dev
+
+jobs:
+  create-prs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get triggering branch
+        id: get_branch
+        run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+
+      - name: Get branch list minus main and dev
+        id: get_branches
+        run: |
+          git fetch origin --prune
+          echo "branches=$(git branch -r | grep -v 'main|dev' | sed 's/origin\///g')" >> $GITHUB_OUTPUT
+
+      - name: Create PRs
+        run: |
+          for branch in ${{ steps.get_branches.outputs.branches }}; do
+            if [ "$branch" != "${{ steps.get_branch.outputs.branch }}" ]; then
+              pr_exist=$(gh pr list --state open --head "dev:$branch" --json number | jq 'length')
+              if [ $pr_exist -eq 0 ]; then
+                gh pr create --title "Merge dev into $branch" --body "This PR automatically merges changes from dev into $branch." --base $branch --head dev
+              fi
+            fi
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_ACTION_TOKEN }}
