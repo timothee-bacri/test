@@ -41,7 +41,10 @@ jobs:
          GH_TOKEN: ${{ secrets.GITHUB_ACTION_TOKEN }}
         run: |
           for branch in ${{ steps.get_branches.outputs.branches }}; do
+            echo "branch=$branch"
             if [ "$branch" != "${{ steps.get_branch.outputs.branch }}" ]; then
+              echo branch is different
+              gh pr list --state open --head "dev:$branch" --json number 
               pr_exist=$(gh pr list --state open --head "dev:$branch" --json number | jq 'length')
               echo "pr_exists=$pr_exists"
               if [[ -n "$pr_exist" && "$pr_exist" -eq 0 ]]; then
