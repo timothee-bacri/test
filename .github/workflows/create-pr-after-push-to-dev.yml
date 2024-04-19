@@ -26,12 +26,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Get triggering branch
-        id: get_branch
+        id: triggering_branch
         run: |
           echo "branch=${GITHUB_REF#refs/heads/}" >> "$GITHUB_OUTPUT"
 
       - name: Get branch list minus main and dev
-        id: get_branches
+        id: branches_minus_dev_main
         run: |
           git fetch origin --prune
           git branch -r | grep -Ev '.*main|dev.*' | sed 's|origin/||g' | sed 's| *||g' | tr '\n' ' ' | sed -E 's| $||'
