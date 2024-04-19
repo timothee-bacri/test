@@ -21,15 +21,22 @@ jobs:
       - name: Get triggering branch
         id: get_branch
         run: |
+          echo "${GITHUB_REF}"
+          echo "${GITHUB_REF#refs}"
+          echo "${GITHUB_REF#refs/heads/}"
           echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
-          echo "$branch"
+          echo "branch=$branch"
 
       - name: Get branch list minus main and dev
         id: get_branches
         run: |
           git fetch origin --prune
-          echo "branches=$(git branch -r | grep -Ev '.*main|dev.*'  | sed 's|origin/||g' | sed 's| *||g')" >> $GITHUB_OUTPUT
-          echo "$branches"
+          git branch -r
+          git branch -r | grep -Ev '.*main|dev.*'
+          git branch -r | grep -Ev '.*main|dev.*' | sed 's|origin/||g'
+          git branch -r | grep -Ev '.*main|dev.*' | sed 's|origin/||g' | sed 's| *||g'
+          echo "branches=$(git branch -r | grep -Ev '.*main|dev.*' | sed 's|origin/||g' | sed 's| *||g')" >> $GITHUB_OUTPUT
+          echo "branches=$branches"
 
       - name: Create PRs
         run: |
