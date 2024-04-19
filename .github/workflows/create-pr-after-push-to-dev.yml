@@ -1,9 +1,9 @@
 name: Create PRs from dev to feature branches after pushing to dev
 
 on:
-  push:
-    branches:
-      - dev
+  #push:
+    #branches:
+      #- dev
   pull_request:
     types: 
       - closed
