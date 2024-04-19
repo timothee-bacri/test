@@ -37,7 +37,7 @@ jobs:
             if [ "$branch" != "${{ steps.triggering_branch.outputs.branch }}" ]; then
 
               # Get changed files between dev and $branch
-              changed_files=$(git diff --name-only dev...$branch)
+              changed_files=$(git diff --name-only dev $branch)
               
               # Create a PR from dev to $branch unless one already exists
               if [ -n "$changed_files" ] && ! gh pr list --state open --head dev --json author,number,headRefName,baseRefName,changedFiles | jq -r '.[].baseRefName' | grep -q $branch ; then
