@@ -1,9 +1,9 @@
 name: Create PRs from dev to feature branches after pushing to dev
 
 on:
-  push:
-    branches:
-      - dev
+  #push:
+    #branches:
+      #- dev
   pull_request:
     types: 
       - closed
@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Get triggering branch
         id: get_branch
@@ -26,7 +26,7 @@ jobs:
         id: get_branches
         run: |
           git fetch origin --prune
-          echo "branches=$(git branch -r | grep -v 'main|dev' | sed 's/origin\///g')" >> $GITHUB_OUTPUT
+          echo "branches=$(git branch -r | grep -Ev '.*main|dev.*'  | sed 's|origin/||g')" >> $GITHUB_OUTPUT
 
       - name: Create PRs
         run: |
