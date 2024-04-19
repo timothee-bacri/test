@@ -20,7 +20,7 @@ jobs:
   
   create-prs:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged && github.event.pull_request.base.ref == 'dev'
+    if: github.event.pull_request.merged && github.event.pull_request.base.ref == 'dev' && github.event.pull_request.head.ref != 'main'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
