@@ -43,7 +43,8 @@ jobs:
           for branch in ${{ steps.get_branches.outputs.branches }}; do
             if [ "$branch" != "${{ steps.get_branch.outputs.branch }}" ]; then
               pr_exist=$(gh pr list --state open --head "dev:$branch" --json number | jq 'length')
-              if [ "$pr_exist" -eq 0 ]; then
+              echo "pr_exists=$pr_exists"
+              if [[ -n "$pr_exist" && "$pr_exist" -eq 0 ]]; then
                 gh pr create --title "Merge dev into $branch" --body "This PR automatically merges changes from dev into $branch." --base $branch --head dev
               fi
             fi
