@@ -25,7 +25,7 @@ jobs:
           echo "${GITHUB_REF#refs}"
           echo "${GITHUB_REF#refs/heads/}"
           echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
-          echo "branch=$branch"
+          echo "output=$GITHUB_OUTPUT"
 
       - name: Get branch list minus main and dev
         id: get_branches
@@ -36,7 +36,7 @@ jobs:
           git branch -r | grep -Ev '.*main|dev.*' | sed 's|origin/||g'
           git branch -r | grep -Ev '.*main|dev.*' | sed 's|origin/||g' | sed 's| *||g'
           echo "branches=$(git branch -r | grep -Ev '.*main|dev.*' | sed 's|origin/||g' | sed 's| *||g')" >> $GITHUB_OUTPUT
-          echo "branches=$branches"
+          echo "output=$GITHUB_OUTPUT"
 
       - name: Create PRs
         run: |
