@@ -38,10 +38,10 @@ jobs:
             echo "branch=$branch"
             if [ "$branch" != "${{ steps.get_branch.outputs.branch }}" ]; then
               echo branch is different
-              gh pr list --state open --head "dev:$branch" --json number 
-              pr_exist=$(gh pr list --state open --head "dev:$branch" --json number | jq 'length')
+              pr_exist=$(gh pr list --state open --head dev --json author,number,headRefName,baseRefName,changedFiles | jq -r '.[].baseRefName' | grep -q $branch)
               echo "pr_exists=$pr_exists"
-              if [[ -n "$pr_exist" && "$pr_exist" -eq 0 ]]; then
+              gh pr list --state open --head dev --json author,number,headRefName,baseRefName,changedFiles | jq -r '.[].baseRefName' | grep -q $branch && echo yes || echo no
+              if [[ gh pr list --state open --head dev --json author,number,headRefName,baseRefName,changedFiles | jq -r '.[].baseRefName' | grep -q $branch ]]; then
                 gh pr create --title "Merge dev into $branch" \
                              --body "This PR was automatically created to propose changes from dev into $branch." \
                              --base $branch \
