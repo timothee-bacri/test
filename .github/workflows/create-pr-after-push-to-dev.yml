@@ -17,11 +17,11 @@ jobs:
         id: get_branch
         run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
 
-      - name: Get branch list
+      - name: Get branch list minus main and dev
         id: get_branches
         run: |
           git fetch origin --prune
-          echo "branches=$(git branch -r | grep -v 'main' | sed 's/origin\///g')" >> $GITHUB_OUTPUT
+          echo "branches=$(git branch -r | grep -v 'main|dev' | sed 's/origin\///g')" >> $GITHUB_OUTPUT
 
       - name: Create PRs
         run: |
