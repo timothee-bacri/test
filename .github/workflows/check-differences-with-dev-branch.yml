@@ -1,0 +1,22 @@
+name: Check if a PR to dev is up-to-date
+
+on:
+  pull_request:
+    types: 
+      - open
+
+jobs:
+  create-prs:
+    runs-on: ubuntu-latest
+    # if: github.event.pull_request.base.ref == 'dev'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+          
+      - name: Check that it has synced with dev
+        run: |
+          branch_from="${{ github.event.pull_request.head.ref }}"
+          branch_to="${{ github.event.pull_request.base.ref }}" # = 'dev'
+
+          # Exits with error if there are differences
+          git diff --exit-code origin/dev origin/$branch_from
