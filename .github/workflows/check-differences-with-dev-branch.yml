@@ -2,7 +2,7 @@ name: Check if a PR to dev is up-to-date
 
 on:
   pull_request:
-    branches-ignore:
+    branches:
       - dev
       - main
 
