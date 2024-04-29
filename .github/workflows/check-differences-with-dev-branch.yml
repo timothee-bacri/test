@@ -4,8 +4,9 @@ on:
   pull_request:
     types: 
       - open
-    branches:
+    branches-ignore:
       - dev
+      - main
 
 jobs:
   create-prs:
