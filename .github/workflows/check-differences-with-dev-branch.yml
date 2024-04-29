@@ -2,14 +2,19 @@ name: Check if a PR to dev is up-to-date
 
 on:
   pull_request:
+    branches:
+      - dev
 
 jobs:
-  create-prs:
+  error-if-not-up-to-date:
     runs-on: ubuntu-latest
     # if: github.event.pull_request.base.ref == 'dev'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        
+      - name: Fetch latest changes from dev branch
+        run: git fetch origin dev
           
       - name: Check that it has synced with dev
         run: |
@@ -17,4 +22,4 @@ jobs:
           branch_to="${{ github.event.pull_request.base.ref }}" # = 'dev'
 
           # Exits with error if there are differences
-          git diff --exit-code origin/dev origin/$branch_from
+          git diff --exit-code origin/$branch_to $branch_from
