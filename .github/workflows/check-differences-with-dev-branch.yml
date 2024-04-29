@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  create-prs:
+  error-if-not-up-to-date:
     runs-on: ubuntu-latest
     # if: github.event.pull_request.base.ref == 'dev'
     steps:
