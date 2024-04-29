@@ -1,10 +1,11 @@
 name: Create PRs from dev to feature branches after pushing to dev
 
 on:
-  pull_request:
-    types: 
-      - closed
-
+  #pull_request:
+  #  types: 
+  #    - closed
+  workflow_dispatch:
+    
 jobs:
   create-prs:
     runs-on: ubuntu-latest
