@@ -10,6 +10,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        
+      - name: Fetch latest changes from dev branch
+        run: git fetch origin dev
           
       - name: Check that it has synced with dev
         run: |
